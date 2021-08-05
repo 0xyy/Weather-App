@@ -21,8 +21,35 @@ const getWeather = async city => {
         return data;
 }
 
-const convertToCelsius = temp => Math.floor(temp - 273.15);
-const convertToKilPerHour = speed => Math.ceil(speed * 18 / 5);
+const showInConsole = (name, country, main, description, temp, speed, timezone) => {
+    console.log('----------------------------------------------');
+    console.log(`The weather in city ${name} in ${country}.`);
+    console.log('----------------------------------------------');
+    console.log(`Today: ${main}, ${description}.`);
+    console.log('----------------------------------------------');
+    console.log(`The temperature is ${temp} Kelvin / ${convertToCelsius(temp)} degrees Celsius.`);
+    console.log('----------------------------------------------');
+    console.log(`The wind speed is ${speed} m/s or ${convertToKilPerHour(speed)} km/h.`);
+    console.log('----------------------------------------------');
+    console.log(`Current time in ${name} is ${getCurrentTimeInCity(timezone)}.`);
+    console.log('----------------------------------------------');
+}
+
+const convertToCelsius = temp => {
+    return Math.floor(temp - 273.15);
+}
+
+
+const convertToKilPerHour = speed =>  {
+    return Math.ceil(speed * 18 / 5);
+}
+
+const getCurrentTimeInCity = timezone => {
+    const date = new Date();
+    const actualTime = new Date((date.getTime())+timezone*1000).toISOString();
+    let result = actualTime.match(/\d\d:\d\d/);
+    return result[0];
+}
 
 const showWeather = data => {
     const { main, description } = data.weather[0];
@@ -30,35 +57,43 @@ const showWeather = data => {
     const { temp, humidity } = data.main;
     const { country } = data.sys;
     const { speed } = data.wind;
+
     const date = new Date();
+
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    const actualTime = new Date((date.getTime())+timezone*1000).toISOString();
-    let result = actualTime.match(/\d\d:\d\d/);
 
     weatherResult.classList.add('weather__result--active');
+
     errMessageSpan.textContent = '';
     dateEl.textContent = `${weekdays[date.getDay()]}, ${date.getDate()} ${monthNames[date.getMonth()]}`;
     temperatureEl.textContent = `${convertToCelsius(temp)}°C`;
     cityEl.textContent = `${name}, ${country}`;
     descriptionEl.textContent = `${main}, ${description}`;
     windEl.textContent = `Wind: ${convertToKilPerHour(speed)} km/h`;
-    timeEl.textContent = result[0];
+    timeEl.textContent = getCurrentTimeInCity(timezone);
     humidityEl.textContent = `Humidity: ${humidity}%`;
+
+    showInConsole(name, country, main, description, temp, speed, timezone);
 }
 
 const showError = err => {
-    weatherResult.classList.remove('weather__result--active')
+    weatherResult.classList.remove('weather__result--active');
     errMessageSpan.textContent = err.message;
 }
 
 const getCity = e => {
     e.preventDefault();
     getWeather(inputCity.value)
-        .then(data => showWeather(data))
-        .catch(err => showError(err));
+        .then(data => {
+            return showWeather(data);
+        })
+        .catch(err => {
+            return showError(err);
+        });
     inputCity.value = '';
 };
 
@@ -78,38 +113,44 @@ anime.timeline({loop: true})
         opacity: ml4.opacityIn,
         scale: ml4.scaleIn,
         duration: ml4.durationIn
-    }).add({
+    })
+    .add({
     targets: '.ml4 .letters-1',
     opacity: 0,
     scale: ml4.scaleOut,
     duration: ml4.durationOut,
     easing: "easeInExpo",
     delay: ml4.delay
-}).add({
+    })
+    .add({
     targets: '.ml4 .letters-2',
     opacity: ml4.opacityIn,
     scale: ml4.scaleIn,
     duration: ml4.durationIn
-}).add({
+    })
+    .add({
     targets: '.ml4 .letters-2',
     opacity: 0,
     scale: ml4.scaleOut,
     duration: ml4.durationOut,
     easing: "easeInExpo",
     delay: ml4.delay
-}).add({
+    })
+    .add({
     targets: '.ml4 .letters-3',
     opacity: ml4.opacityIn,
     scale: ml4.scaleIn,
     duration: ml4.durationIn
-}).add({
+    })
+    .add({
     targets: '.ml4 .letters-3',
     opacity: 0,
     scale: ml4.scaleOut,
     duration: ml4.durationOut,
     easing: "easeInExpo",
     delay: ml4.delay
-}).add({
+    })
+    .add({
     targets: '.ml4',
     opacity: 0,
     duration: 500,
