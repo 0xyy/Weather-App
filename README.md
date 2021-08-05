@@ -1,2 +1,2 @@
 # Weather-API
- Stylish Weather App using weather API
+ Weather App using weather API
