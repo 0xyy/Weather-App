@@ -99,6 +99,8 @@ const getCity = e => {
 
 submitForm.addEventListener('submit', getCity);
 
+
+// animation By Tobias Ahlin
 let ml4 = {};
 ml4.opacityIn = [0,1];
 ml4.scaleIn = [0.2, 1];
